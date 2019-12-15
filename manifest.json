@@ -1,0 +1,37 @@
+{
+  "name": "Rotten Tomatoes on Cineplex",
+  "version": "1.0",
+  "description": "Will display the rotten tomatoes score of a movies presented on the Cineplex.com website.",
+  "permissions": [
+    "activeTab",
+    "declarativeContent",
+    "storage",
+    "webNavigation",
+    "tabs",
+    "notifications",
+    "http://*/",
+    "https://*/"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false,
+    "matches": [
+      "*.cineplex.com/Showtimes/*"
+    ]
+  },
+  "page_action": {
+    "default_icon": {
+      "16": "images/get_started16.png",
+      "32": "images/get_started32.png",
+      "48": "images/get_started48.png",
+      "128": "images/get_started128.png"
+    }
+  },
+  "icons": {
+    "16": "images/get_started16.png",
+    "32": "images/get_started32.png",
+    "48": "images/get_started48.png",
+    "128": "images/get_started128.png"
+  },
+  "manifest_version": 2
+}
