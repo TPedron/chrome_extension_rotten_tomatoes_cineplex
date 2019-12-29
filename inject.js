@@ -1,111 +1,36 @@
 
+// INJECT.JS by TOM PEDRON
+// 1. Installed on a Cineplex.com page by BACKGROUND.JS
+// 2. Adds a message listener to add a movie score to the page which is
+//    meant to run several times, once for each movie with an RT score.
+// 3. Each time, it retrieves the list of movie name DOM elements, then we
+//    lazily parse it to find the right one based on movie name.
+// 4. If the movie element is found, we update the inner text to include
+//    the score.
+// 5. After adding the listener, we then return a string array of all movies
+//    found on the page based on the 'movie-details-link-click' class.
+
 (function() {
   chrome.runtime.onMessage.addListener(function(message) {
-    console.log("BEGIN")
     var info = message.parameter;
-    //
-    console.log(info);
-
     score = info.score
     index = info.index
     name = info.name
-    // console.log(name)
-    // console.log(index)
-    // console.log(score)
+    console.log("Adding score to page for " + name)
 
+    // Update any movie-details-link-click elements
     movieElements = document.getElementsByClassName("movie-details-link-click");
-
     movie = movieElements[index];
-    //console.log(movie)
+
     if(movie == null){
-      console.log("MOVIE IS NULL")
-    }
-
-
-
-    if(movie.innerText == name){ //!movie.innerText.includes('% on RT') &&
+      console.log("Movie " + name + " not found on page.")
+    }else if(movie.innerText == name && !movie.innerText.includes('% on RT') ){
       newText = movie.innerText + '('+ score+ '% on Rotten Tomatoes)'; 
-      console.log(newText)
+      console.log("Adding " + newText)
       movie.innerText = newText;
-      //console.log('done')
     }
-    ///
-
   });
-
 })();
 
-
-
-
-// info structure is set when calling inject.js from background
-
-// console.log("Rotten Tomatoes on Cineplex runnning...")
-
-// console.log('info')
-// console.log(info);
-
-// score = info.score
-// index = info.index
-// name = info.name
-// // console.log(name)
-// // console.log(index)
-// // console.log(score)
-
-// movieElements = document.getElementsByClassName("movie-details-link-click");
-
-// movie = movieElements[index];
-// //console.log(movie)
-// if(movie == null){
-//   console.log("MOVIE IS NULL")
-// }
-
-
-
-// if(movie.innerText == name){ //!movie.innerText.includes('% on RT') &&
-//   newText = movie.innerText + '('+ score+ '% on Rotten Tomatoes)'; 
-//   console.log(newText)
-//   movie.innerText = newText;
-//   //console.log('done')
-// }
-
-
-
-// // info is set whencalling inject.js
-// console.log("Rotten Tomatoes on Cineplex runnning...")
-// console.log('info')
-// console.log(info);
-
-// //if (info.data !== undefined) {
-//   // data = JSON.parse(info.data)
-//   // console.log('data')
-//   // console.log(data);
-//   console.log('make scores')
-//   scores = info.scores
-//   console.log('scores')
-//   console.log(scores)
-
-//   console.log("get elements")
-//   movieElements = document.getElementsByClassName("movie-details-link-click");
-//   console.log(movieElements)
-
-//   console.log('BEGIN')
-//   Array.prototype.forEach.call(movieElements, function(movie, index) {
-//     console.log('AAAA')
-//     console.log(movie)
-//     console.log('BBBB')
-//     movieName = movie.innerText;
-//     console.log('CCCC')
-//     console.log('Movie ' + index + ' = ' + movieName);
-//     console.log('DDDD')
-//     if (scores[index] != null) {
-//       console.log('EEEE')
-//       new_text = movieName + '('+ scores[index] + '% on Rotten Tomatoes)';
-//       console.log('FFFF')
-//       console.log(new_text)
-//       console.log('GGGG')
-//       movie.innerText = new_text;
-//       console.log('HHHH')
-//     }
-//   });
-// //}
+// Return list of movie names to BACKGROUND.JS
+Array.from(document.getElementsByClassName("movie-details-link-click")).map(h => h.innerText);
