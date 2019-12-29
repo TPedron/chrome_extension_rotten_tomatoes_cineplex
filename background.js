@@ -27,15 +27,20 @@ chrome.tabs.onUpdated.addListener(function (tabId , info) {
 // GET MOVIE NAMES
 async function receiveMovieNames(resultsArray){
   console.log("RECIEVE MOVIE NAMES")
-  // movieElements = null
-  // if(resultsArray != null && resultsArray.length > 0){
-  //   movieElements = resultsArray[0];
-  // }
+  console.log(resultsArray)
+  if (typeof resultsArray !== 'undefined') {
+    movieElements = resultsArray[0];
+    console.log(movieElements.length)
+    console.log(movieElements)
+  
+    if(movieElements.length > 0 && !movieElements[0].includes('% on RT')){
+      getScores(movieElements)
+    }
+  }
 
-  movieElements = resultsArray[0];
+  //movieElements = resultsArray[0];
 
-  console.log(movieElements.length)
-  console.log(movieElements)
+
 
   // scoresArray = await getScores(movieElements)
   //   .then(data => {
@@ -44,7 +49,7 @@ async function receiveMovieNames(resultsArray){
   //   .catch(err => {
   //     console.log("Error")
   //   })
-  getScores(movieElements)
+  
 }
 
 async function getScores(){
@@ -69,7 +74,7 @@ async function getScores(){
           updateWebsiteWithScore(movieName, movieScore, index)
           //dconsole.log(scoresArray)
         }else{
-          console.log('score not found for ' + movieName );
+          console.log('Score not found for ' + movieName );
           //updateWebsiteWithScore(movieScore, index)
         }
       });
@@ -90,24 +95,54 @@ function updateWebsiteWithScore(name, score, index){
     "score": score,
     "index": index
   }
-  console.log (obj);
+  // console.log (obj);
   // console.log ( JSON.stringify( obj ) );
 
   // Update Cineplex.com with rotten tomato scores
   // console.log('Attempting to update Cineplex site with score for '+ name);
   // console.log("TAB QUERY")
-  chrome.tabs.query( {url: "*://*.cineplex.com/*"}, //, currentWindow: true { active: true },
+  chrome.tabs.query( {url: "*://*.cineplex.com/*", currentWindow: true,active: true}, //, currentWindow: true { active: true },
     function(tabs) {
       //console.log(tabs)
+      console.log('Start updating Cineplex site with score for '+ name);
       console.log("TAB ID = "+ tabs[0].id)
-      console.log('Updating Cineplex site with score for '+ name);
-      chrome.tabs.executeScript(
-        tabs[0].id, 
-        { code: 'var info = ' +  JSON.stringify( obj )},
-        function() {
-          chrome.tabs.executeScript(tabs[0].id, {file: 'inject.js'});
+      console.log (obj);
+      
+      chrome.tabs.executeScript(tabs[0].id, {
+        file: 'inject.js'
+      }, function() {
+        chrome.tabs.sendMessage(tabs[0].id, {parameter: obj});
+        if (chrome.runtime.lastError) { // or if (!result)
+            console.log("ERROR")
+            console.log(chrome.runtime.lastError.message)
+            return;
         }
-      );
+      });
+
+      // code_str = 'var info = ' +  JSON.stringify( obj ) + ';';
+      // console.log(code_str)
+
+      // chrome.tabs.executeScript(tabs[0].id, {
+      //   code: code_str
+      // }, function() {
+
+      //   console.log('    running script ' + name)
+
+      //   chrome.tabs.executeScript(tabs[0].id, {
+      //     //code: code_str,
+      //     file: 'inject.js'
+      //   }, function(result) {
+      //     if (chrome.runtime.lastError) { // or if (!result)
+      //         console.log("ERROR")
+      //         console.log(chrome.runtime.lastError.message)
+      //         return;
+      //     }
+      //   });
+
+       // console.log('    completed running script')
+      //});
+
+      console.log('Completed updating Cineplex site with score for '+ name);
     }
   );
 }

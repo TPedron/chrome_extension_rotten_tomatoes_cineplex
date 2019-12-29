@@ -1,3 +1,43 @@
+
+(function() {
+  chrome.runtime.onMessage.addListener(function(message) {
+    console.log("BEGIN")
+    var info = message.parameter;
+    //
+    console.log(info);
+
+    score = info.score
+    index = info.index
+    name = info.name
+    // console.log(name)
+    // console.log(index)
+    // console.log(score)
+
+    movieElements = document.getElementsByClassName("movie-details-link-click");
+
+    movie = movieElements[index];
+    //console.log(movie)
+    if(movie == null){
+      console.log("MOVIE IS NULL")
+    }
+
+
+
+    if(movie.innerText == name){ //!movie.innerText.includes('% on RT') &&
+      newText = movie.innerText + '('+ score+ '% on Rotten Tomatoes)'; 
+      console.log(newText)
+      movie.innerText = newText;
+      //console.log('done')
+    }
+    ///
+
+  });
+
+})();
+
+
+
+
 // info structure is set when calling inject.js from background
 
 // console.log("Rotten Tomatoes on Cineplex runnning...")
@@ -5,29 +45,29 @@
 // console.log('info')
 // console.log(info);
 
-score = info.score
-index = info.index
-name = info.name
-// console.log(name)
-// console.log(index)
-// console.log(score)
+// score = info.score
+// index = info.index
+// name = info.name
+// // console.log(name)
+// // console.log(index)
+// // console.log(score)
 
-movieElements = document.getElementsByClassName("movie-details-link-click");
+// movieElements = document.getElementsByClassName("movie-details-link-click");
 
-movie = movieElements[index];
-//console.log(movie)
-if(movie == null){
-  console.log("MOVIE IS NULL")
-}
+// movie = movieElements[index];
+// //console.log(movie)
+// if(movie == null){
+//   console.log("MOVIE IS NULL")
+// }
 
 
 
-if(movie.innerText == name){ //!movie.innerText.includes('% on RT') &&
-  newText = movie.innerText + '('+ score+ '% on Rotten Tomatoes)'; 
-  console.log(newText)
-  movie.innerText = newText;
-  //console.log('done')
-}
+// if(movie.innerText == name){ //!movie.innerText.includes('% on RT') &&
+//   newText = movie.innerText + '('+ score+ '% on Rotten Tomatoes)'; 
+//   console.log(newText)
+//   movie.innerText = newText;
+//   //console.log('done')
+// }
 
 
 
