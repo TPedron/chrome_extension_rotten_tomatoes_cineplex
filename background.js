@@ -43,12 +43,8 @@ chrome.tabs.onUpdated.addListener(function (tabId , info) {
 
 // GET MOVIE NAMES LIST
 async function receiveMovieNames(resultsArray){
-  console.log("RECIEVE MOVIE NAMES")
-  console.log(resultsArray)
   if (typeof resultsArray !== 'undefined') {
     movieElements = resultsArray[0];
-    console.log(movieElements.length)
-    console.log(movieElements)
   
     if(movieElements.length > 0 && !movieElements[0].includes('% on RT')){
       getScoresFromRT(movieElements)

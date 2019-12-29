@@ -12,6 +12,7 @@
     "http://*/",
     "https://*/"
   ],
+  "web_accessible_resources": ["images/rt_logo_small.png"],
   "background": {
     "scripts": ["background.js"],
     "persistent": false,

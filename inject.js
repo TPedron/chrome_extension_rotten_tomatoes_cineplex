@@ -31,9 +31,12 @@
 
 function addScoreToElement(movie, name, score){
   if(movie == null != null && movie.innerText == name && !movie.innerText.includes('% on RT') && score != null){
-    newText = movie.innerText + ' ('+ score+ '% on Rotten Tomatoes)'; 
-    console.log("Adding " + newText)
-    movie.innerText = newText;
+    imgUrl = chrome.extension.getURL("images/rt_logo_small.png")
+    img_html_str = "<img src=\'" + imgUrl + "\' width=\'25px\' height=\'25px\' style=\'vertical-align:middle;\' >"
+    newText = movie.innerText + ' ('+ score + "% " + img_html_str+ ")";
+    movie.innerHTML = newText;
+    movie.style.display = "inline-block";
+    movie.style.verticalAlign = "middle";
   }
 }
 
