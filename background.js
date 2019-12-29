@@ -13,7 +13,7 @@
 
 // INSTALL LISTENER
 chrome.runtime.onInstalled.addListener(function() {
-  console.log('Rotten Tomatoes on Cineplex added.');
+  console.log('Rotten Tomatoes on Cineplex Chrome Extension added.');
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
     chrome.declarativeContent.onPageChanged.addRules([{
       conditions: [new chrome.declarativeContent.PageStateMatcher({
@@ -28,11 +28,24 @@ chrome.runtime.onInstalled.addListener(function() {
 // PAGE LOAD COMPLETE LISTENER
 chrome.tabs.onUpdated.addListener(function (tabId , info) {
   if (info.status === 'complete') {
-    chrome.tabs.executeScript(
-      info.tabId,
-      { file: 'inject.js' },
-      receiveMovieNames
-    )
+    chrome.tabs.get(tabId, function(tab) {
+      currUrl = tab.url
+      if (currUrl != null && currUrl.includes("cineplex.com")){
+        chrome.tabs.executeScript(
+          info.tabId,
+          { file: 'inject.js' },
+          receiveMovieNames
+        )
+      }
+    });
+
+
+
+    // chrome.tabs.executeScript(
+    //   info.tabId,
+    //   { file: 'inject.js' },
+    //   receiveMovieNames
+    // )
   }
 });
 
@@ -64,7 +77,7 @@ async function getScoresFromRT(movieElements){
       sendApiCall(pageSearchUrl).then(result => {
         if(result != null && result.movies != null && result.movies[0] != null){
           movieScore = result.movies[0].meterScore
-          updateWebsiteWithScore(movieName, movieScore, index)
+          updateWebsiteWithScore(movieName, movieScore)
         }else{
           console.log('Score not found for ' + movieName );
         }
@@ -75,11 +88,10 @@ async function getScoresFromRT(movieElements){
 }
 
 // UPDATE WEBSITE WITH SCORE FOR A SINGLE MOVIE (CALLED FOR EACH MOVIE)
-function updateWebsiteWithScore(name, score, index){
+function updateWebsiteWithScore(name, score){
   var obj = {
     "name": name,
-    "score": score,
-    "index": index
+    "score": score
   }
 
   // Update Cineplex.com with rotten tomato scores

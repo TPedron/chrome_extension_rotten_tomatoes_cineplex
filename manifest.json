@@ -16,7 +16,7 @@
     "scripts": ["background.js"],
     "persistent": false,
     "matches": [
-      "*.cineplex.com/Showtimes/*"
+      "*.cineplex.com/*"
     ]
   },
   "page_action": {
