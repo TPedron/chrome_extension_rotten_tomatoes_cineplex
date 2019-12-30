@@ -1,5 +1,6 @@
 {
   "name": "Rotten Tomatoes on Cineplex",
+  "short_name": "RT-Cineplex",
   "version": "1.0",
   "description": "Will display the rotten tomatoes score of a movies presented on the Cineplex.com website.",
   "permissions": [
@@ -9,8 +10,10 @@
     "webNavigation",
     "tabs",
     "notifications",
-    "http://*/",
-    "https://*/"
+    "http://www.cineplex.com/*",
+    "https://www.cineplex.com/*",
+    "http://www.rottentomatoes.com/*",
+    "https://www.rottentomatoes.com/*"
   ],
   "web_accessible_resources": ["images/rt_logo_small.png"],
   "background": {
