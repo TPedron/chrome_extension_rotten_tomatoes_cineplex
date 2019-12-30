@@ -18,19 +18,23 @@
 
     movieElements1 = Array.from(document.getElementsByClassName("movie-details-link-click"));
     movieElements2 = Array.from(document.getElementsByClassName("movie-item-title ng-binding"));
+    movieElements3 = Array.from(document.getElementsByClassName("h3 theatre-movie-title margin-vertical-xs")); 
+    movieElements4 = Array.from(document.getElementsByClassName("showtime-card--title"));
+    movieElements5 = Array.from(document.getElementsByClassName("module-item--title"));
     // add more movieElementsX lists here
 
     // Generate final list of all movie elements for supported classes to loop through and update the ones for the current movie
-    allMovieElements = movieElements1.concat(movieElements2);
+    allMovieElements = movieElements1.concat(movieElements2).concat(movieElements3).concat(movieElements4).concat(movieElements5);
 
     for(var i = 0; i < allMovieElements.length; i++){
+      console.log("Adding for " + name)
       addScoreToElement(allMovieElements[i], name, score)
     }
   });
 })();
 
 function addScoreToElement(movie, name, score){
-  if(movie == null != null && movie.innerText == name && !movie.innerText.includes('% on RT') && score != null){
+  if(movie != null && movie.innerText == name && !movie.innerText.includes('% on RT') && score != null){
     imgUrl = chrome.extension.getURL("images/rt_logo_small.png")
     img_html_str = "<img src=\'" + imgUrl + "\' width=\'25px\' height=\'25px\' style=\'vertical-align:middle;display:inline-block;\' >"
     newText = '<span> ' + movie.innerText + ' - '+ score + "% " + img_html_str+ " </span>";
@@ -56,14 +60,28 @@ function arrayUnique(array) {
 }
 
 // found on urls like: https://www.cineplex.com/Showtimes/any-movie/nearby-theatres?Date=12/29/2019
-movie_details_link_click_list = Array.from(document.getElementsByClassName("movie-details-link-click")).map(h => h.innerText);
+movie_details_link_click_list = Array.from(document.getElementsByClassName("movie-details-link-click"));
+
 // found on urls like https://www.cineplex.com/
-movie_item_title_ng_binding_list = Array.from(document.getElementsByClassName("movie-item-title ng-binding")).map(h => h.innerText);
+movie_item_title_ng_binding_list = Array.from(document.getElementsByClassName("movie-item-title ng-binding"));
+
+// found on urls like https://www.cineplex.com/Theatre/scotiabank-theatre-toronto
+theatre_movie_title_list = Array.from(document.getElementsByClassName("h3 theatre-movie-title margin-vertical-xs"));
+
+// found on urls like https://www.cineplex.com/Movies/NowPlaying?cmpid=MainSubNavEN_now-playing
+showtime_card_list = Array.from(document.getElementsByClassName("showtime-card--title"));
+
+//found on urls like https://www.cineplex.com/Theatres/UltraAVX
+module_title_list = Array.from(document.getElementsByClassName("module-item--title"));
 // ADD MORE ARRAYS TO MERGE
 
+// merge into a single list of elements
+mergeArray = movie_details_link_click_list.concat(movie_item_title_ng_binding_list).concat(theatre_movie_title_list).concat(showtime_card_list).concat(module_title_list);
 
-mergeArray = movie_details_link_click_list.concat(movie_item_title_ng_binding_list)
+// pull out movie names from elements
+movie_names_list = mergeArray.map(h => h.innerText);
 
+console.log(movie_names_list)
 
-// dedupe in case we have any duplicate movies presented to minimize Rotten Tomatoes API calls
-arrayUnique(mergeArray);
+// dedupe movie names in case we have any duplicate movies presented to minimize Rotten Tomatoes API calls
+arrayUnique(movie_names_list);

@@ -17,7 +17,7 @@ chrome.runtime.onInstalled.addListener(function() {
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
     chrome.declarativeContent.onPageChanged.addRules([{
       conditions: [new chrome.declarativeContent.PageStateMatcher({
-        pageUrl: { urlContains: "cineplex.com/Showtimes" }
+        pageUrl: { urlContains: "cineplex.com" }
       })
       ],
           actions: [new chrome.declarativeContent.ShowPageAction()]
@@ -31,6 +31,7 @@ chrome.tabs.onUpdated.addListener(function (tabId , info) {
     chrome.tabs.get(tabId, function(tab) {
       currUrl = tab.url
       if (currUrl != null && currUrl.includes("cineplex.com")){
+        console.log("Running inject script")
         chrome.tabs.executeScript(
           info.tabId,
           { file: 'inject.js' },
@@ -43,10 +44,10 @@ chrome.tabs.onUpdated.addListener(function (tabId , info) {
 
 // GET MOVIE NAMES LIST
 async function receiveMovieNames(resultsArray){
+  console.log("Getting scores for movies")
   if (typeof resultsArray !== 'undefined') {
     movieElements = resultsArray[0];
-  
-    if(movieElements.length > 0 && !movieElements[0].includes('% on RT')){
+    if(movieElements != null && movieElements.length > 0){
       getScoresFromRT(movieElements)
     }
   }
@@ -54,23 +55,21 @@ async function receiveMovieNames(resultsArray){
 
 // GET SCORES FOR MOVIE NAMES LIST
 async function getScoresFromRT(movieElements){
-  console.log("Getting scores for movies")
+  console.log(movieElements)
   scoresArray = []
   // Get scores for returned movie names
   Array.prototype.forEach.call(movieElements, function(movieName, index) {
-    if(!movieName.includes('% on RT')){
-      //Search Rotten Tomatoes for Movie
-      pageSearchUrl = 'https://www.rottentomatoes.com/napi/search/?limit=1&query=' + encodeURI(movieName);
+    //Search Rotten Tomatoes for Movie
+    pageSearchUrl = 'https://www.rottentomatoes.com/napi/search/?limit=1&query=' + encodeURI(movieName);
 
-      sendApiCall(pageSearchUrl).then(result => {
-        if(result != null && result.movies != null && result.movies[0] != null){
-          movieScore = result.movies[0].meterScore
-          updateWebsiteWithScore(movieName, movieScore)
-        }else{
-          console.log('Score not found for ' + movieName );
-        }
-      });
-    }   
+    sendApiCall(pageSearchUrl).then(result => {
+      if(result != null && result.movies != null && result.movies[0] != null){
+        movieScore = result.movies[0].meterScore
+        updateWebsiteWithScore(movieName, movieScore)
+      }else{
+        console.log('Score not found for ' + movieName );
+      }
+    });
   });
   return scoresArray
 }
@@ -83,7 +82,7 @@ function updateWebsiteWithScore(name, score){
   }
 
   // Update Cineplex.com with rotten tomato scores
-  chrome.tabs.query( {url: "*://*.cineplex.com/*", currentWindow: true, active: true},
+  chrome.tabs.query( {currentWindow: true, active: true},
     function(tabs) {
       chrome.tabs.sendMessage(tabs[0].id, {parameter: obj});
       console.log('Completed updating Cineplex site with score for '+ name);

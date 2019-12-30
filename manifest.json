@@ -1,7 +1,7 @@
 {
   "name": "Rotten Tomatoes on Cineplex",
   "short_name": "RT-Cineplex",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Will display the rotten tomatoes score of a movies presented on the Cineplex.com website.",
   "permissions": [
     "activeTab",
