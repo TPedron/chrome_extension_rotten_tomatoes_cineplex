@@ -32,8 +32,8 @@
 function addScoreToElement(movie, name, score){
   if(movie == null != null && movie.innerText == name && !movie.innerText.includes('% on RT') && score != null){
     imgUrl = chrome.extension.getURL("images/rt_logo_small.png")
-    img_html_str = "<img src=\'" + imgUrl + "\' width=\'25px\' height=\'25px\' style=\'vertical-align:middle;\' >"
-    newText = movie.innerText + ' ('+ score + "% " + img_html_str+ ")";
+    img_html_str = "<img src=\'" + imgUrl + "\' width=\'25px\' height=\'25px\' style=\'vertical-align:middle;display:inline-block;\' >"
+    newText = '<span> ' + movie.innerText + ' - '+ score + "% " + img_html_str+ " </span>";
     movie.innerHTML = newText;
     movie.style.display = "inline-block";
     movie.style.verticalAlign = "middle";
@@ -52,17 +52,18 @@ function arrayUnique(array) {
               a.splice(j--, 1);
       }
   }
-
   return a;
 }
 
 // found on urls like: https://www.cineplex.com/Showtimes/any-movie/nearby-theatres?Date=12/29/2019
 movie_details_link_click_list = Array.from(document.getElementsByClassName("movie-details-link-click")).map(h => h.innerText);
-console.log(movie_details_link_click_list)
 // found on urls like https://www.cineplex.com/
 movie_item_title_ng_binding_list = Array.from(document.getElementsByClassName("movie-item-title ng-binding")).map(h => h.innerText);
-console.log(movie_item_title_ng_binding_list)
+// ADD MORE ARRAYS TO MERGE
+
+
 mergeArray = movie_details_link_click_list.concat(movie_item_title_ng_binding_list)
+
 
 // dedupe in case we have any duplicate movies presented to minimize Rotten Tomatoes API calls
 arrayUnique(mergeArray);
