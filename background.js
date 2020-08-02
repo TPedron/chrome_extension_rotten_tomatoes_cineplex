@@ -60,12 +60,13 @@ async function getScoresFromRT(movieElements){
   // Get scores for returned movie names
   Array.prototype.forEach.call(movieElements, function(movieName, index) {
     //Search Rotten Tomatoes for Movie
-    pageSearchUrl = 'https://www.rottentomatoes.com/napi/search/?limit=1&query=' + encodeURI(movieName);
+    pageSearchUrl = 'https://www.rottentomatoes.com/napi/search/?limit=2&query=' + encodeURI(cleanMovieName(movieName));
 
     sendApiCall(pageSearchUrl).then(result => {
       if(result != null && result.movies != null && result.movies[0] != null){
         movieScore = result.movies[0].meterScore
-        updateWebsiteWithScore(movieName, movieScore)
+        external_link = 'https://www.rottentomatoes.com' + result.movies[0].url
+        updateWebsiteWithScore(movieName, movieScore, external_link)
       }else{
         console.log('Score not found for ' + movieName );
       }
@@ -74,11 +75,25 @@ async function getScoresFromRT(movieElements){
   return scoresArray
 }
 
+function cleanMovieName(movieName){
+  // Remove Imax Suffix
+  imaxSuffix = ': The IMAX Experience®'
+  sanitizedMovieName = movieName.replace(imaxSuffix, '')
+  // Remove sub titles info if in brackets (gets most cases)
+  st_suffix = 's.t.)'
+  if(sanitizedMovieName.endsWith(st_suffix)){
+    sanitizedMovieName = sanitizedMovieName.substring(0, sanitizedMovieName.lastIndexOf('('));
+  }
+
+  return sanitizedMovieName
+}
+
 // UPDATE WEBSITE WITH SCORE FOR A SINGLE MOVIE (CALLED FOR EACH MOVIE)
-function updateWebsiteWithScore(name, score){
+function updateWebsiteWithScore(name, score, external_link){
   var obj = {
     "name": name,
-    "score": score
+    "score": score,
+    "external_link": external_link
   }
 
   // Update Cineplex.com with rotten tomato scores
